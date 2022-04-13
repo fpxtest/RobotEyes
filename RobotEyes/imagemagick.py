@@ -9,6 +9,31 @@ class Imagemagick(object):
         self.diff = diff
 
     def compare_images(self):
+        compare_cmd = f'convert "{self.img1}" "{self.img2}" -metric RMSE -compare -format "%[distortion]" info:'
+        attempts = 0
+        while attempts < 2:
+            proc = subprocess.Popen(compare_cmd,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+            out, err = proc.communicate()
+            if err:
+                print('Comparison err: %s' % err)
+            if out:
+                print('Comparison output: %s' % out)
+            try:
+                diff = out
+                trimmed = float("{:.2f}".format(float(diff)))
+                return trimmed
+            except ValueError:
+                if attempts == 0:
+                    print('Comparison failed first time. Output %s' % err)
+                    compare_cmd = 'magick ' + compare_cmd
+                else:
+                    raise Exception('Could not parse comparison output: %s' % err)
+            finally:
+                attempts += 1
+
+    def compare_images_with_compare(self):
         compare_cmd = 'compare -metric RMSE -subimage-search -dissimilarity-threshold 1.0 "%s" "%s" "%s"' \
                       % (self.img1, self.img2, self.diff)
 
