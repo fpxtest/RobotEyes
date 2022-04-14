@@ -13,7 +13,7 @@ Visual regression library and report generator for robot framework. Capture elem
         'Programming Language :: Python',
         'Topic :: Software Development :: Testing',
       ],
-      keywords='visual-regression image-comparison robotframework robot-eyes',
+      keywords='visual-regression image-comparison robotframework robot-eyes compare-image',
       author='Orion c',
       author_email='t880216t@gmail.com',
       url='https://github.com/t880216t/RobotEyes',
@@ -24,7 +24,8 @@ Visual regression library and report generator for robot framework. Capture elem
       install_requires=[
           'pillow',
           'robotframework',
-          'flask'
+          'flask',
+          'opencv-python',
       ],
       entry_points={
           'console_scripts': [
