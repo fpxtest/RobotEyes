@@ -94,6 +94,9 @@ class RobotEyes(object):
     def scroll_to_element(self, selector):
         self.browser.scroll_to_element(selector)
 
+    def is_image_in_screen(self, template_path):
+        return self.browser.is_image_in_screen(template_path)
+
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''
         actual += '.png' if actual.split('.')[-1] not in IMAGE_EXTENSIONS else ''
