@@ -11,7 +11,7 @@ Uses Imagemagick to Compare Images and create a diff image. Custom Report to vie
 ## Requirements
 - Install the `robotframework-eyes` library using `pip`: 
 ```
-    pip install robotframework-eyes
+    pip install git+https://github.com/t880216t/RobotEyes.git#egg=robotframework-eyes
 ```     
 - Install `Imagemagick` (for mac: `brew install imagemagick`, linux: `apt-get install imagemagick`) <br/>
 
