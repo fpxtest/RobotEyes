@@ -1,6 +1,9 @@
 import math
 import platform
+import cv2
+import numpy
 
+from base64 import b64decode
 from PIL import Image, ImageFilter, ImageOps
 from robot.libraries.BuiltIn import BuiltIn
 from selenium.common.exceptions import JavascriptException
@@ -33,6 +36,26 @@ class SeleniumHooks(object):
 
     def is_mobile(self):
         return self.mobile
+
+    def find_by_image(self, imgBuff, templateImg):
+        array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
+        img = cv2.imdecode(array, 0)
+        template = cv2.imread(templateImg, 0)
+        w, h = template.shape[::-1]
+        res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF)
+        _, _, _, maxLoc = cv2.minMaxLoc(res)
+        centre = (maxLoc[0] + (w / 2), maxLoc[1] + (h / 2))
+
+        return centre
+
+    def is_image_in_screen(self, element_image_path):
+        ssBuff = self.driver.get_screenshot_as_base64()
+        loc = self.find_by_image(ssBuff, element_image_path)
+        print(f"Match template loc: {loc}")
+        if loc:
+            return True
+        else:
+            return False
 
     def capture_full_screen(self, path, blur=[], radius=50, redact=[]):
         self.driver.save_screenshot(path)
