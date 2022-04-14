@@ -95,7 +95,8 @@ class RobotEyes(object):
         self.browser.scroll_to_element(selector)
 
     def is_image_in_screen(self, template_path):
-        return self.browser.is_image_in_screen(template_path)
+        if not self.browser.is_image_in_screen(template_path):
+            BuiltIn().run_keyword('Fail', 'Image is not screen.') if self.fail else ''
 
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''

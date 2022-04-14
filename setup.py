@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.5.9'
+version = '1.6.0'
 
 setup(name='robotframework-eyes',
       version=version,
@@ -14,9 +14,9 @@ Visual regression library and report generator for robot framework. Capture elem
         'Topic :: Software Development :: Testing',
       ],
       keywords='visual-regression image-comparison robotframework robot-eyes',
-      author='Jesse Zacharias',
-      author_email='iamjess988@gmail.com',
-      url='https://github.com/jz-jess/RobotEyes',
+      author='Orion c',
+      author_email='t880216t@gmail.com',
+      url='https://github.com/t880216t/RobotEyes',
       license='MIT',
       packages=find_packages(),
       include_package_data=True,
