@@ -94,9 +94,13 @@ class RobotEyes(object):
     def scroll_to_element(self, selector):
         self.browser.scroll_to_element(selector)
 
-    def is_image_in_screen(self, template_path):
-        if not self.browser.is_image_in_screen(template_path):
-            BuiltIn().run_keyword('Fail', 'Image is not screen.') if self.fail else ''
+    def is_image_in_screen(self, template_path, tolerance=None):
+        tolerance = float(tolerance) if tolerance else self.tolerance
+        tolerance = tolerance / 100 if tolerance >= 1 else tolerance
+        difference = self.browser.is_image_in_screen(template_path)
+        color, result = self._get_result(difference, tolerance)
+        if color != self.pass_color:
+            BuiltIn().run_keyword('Fail', f'Image is not in screen , result: {result}') if self.fail else ''
 
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''

@@ -42,20 +42,17 @@ class SeleniumHooks(object):
         img = cv2.imdecode(array, 0)
         template = cv2.imread(templateImg, 0)
         w, h = template.shape[::-1]
-        res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF)
-        _, _, _, maxLoc = cv2.minMaxLoc(res)
-        centre = (maxLoc[0] + (w / 2), maxLoc[1] + (h / 2))
+        res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        centre = (max_loc[0] + (w / 2), max_loc[1] + (h / 2))
 
-        return centre
+        return max_val, centre
 
-    def is_image_in_screen(self, element_image_path):
+    def is_image_in_screen(self, element_image_path, ):
         ssBuff = self.driver.get_screenshot_as_base64()
-        loc = self.find_by_image(ssBuff, element_image_path)
-        print(f"Match template loc: {loc}")
-        if loc:
-            return True
-        else:
-            return False
+        dif, loc = self.find_by_image(ssBuff, element_image_path)
+        print(f"Match template dif: {dif}, loc: {loc}")
+        return dif
 
     def capture_full_screen(self, path, blur=[], radius=50, redact=[]):
         self.driver.save_screenshot(path)
