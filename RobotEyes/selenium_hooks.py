@@ -50,9 +50,10 @@ class SeleniumHooks(object):
 
     def is_image_in_screen(self, element_image_path, ):
         ssBuff = self.driver.get_screenshot_as_base64()
-        dif, loc = self.find_by_image(ssBuff, element_image_path)
-        print(f"Match template dif: {dif}, loc: {loc}")
-        return dif
+        diff, loc = self.find_by_image(ssBuff, element_image_path)
+        trimmed = 1 - float("{:.2f}".format(float(diff)))
+        print(f"Match template trimmed: {trimmed}, loc: {loc}")
+        return trimmed
 
     def capture_full_screen(self, path, blur=[], radius=50, redact=[]):
         self.driver.save_screenshot(path)
