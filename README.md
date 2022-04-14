@@ -1,7 +1,9 @@
 # RobotEyes
-[![Downloads](https://pepy.tech/badge/robotframework-eyes)](https://pepy.tech/project/robotframework-eyes)
-[![Version](https://img.shields.io/pypi/v/robotframework-eyes.svg)](https://pypi.org/project/robotframework-eyes)
-[![HitCount](http://hits.dwyl.io/jz-jess/RobotEyes.svg)](http://hits.dwyl.io/jz-jess/RobotEyes)<br/>
+This Library is forwork from https://github.com/jz-jess/RobotEyes by [t880216t](https://github.com/t880216t)
+
+Add custom keyword for UI auto test.
+
+=======================================================
 
 Visual Regression Library for Robot Framework
 
