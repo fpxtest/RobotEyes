@@ -101,6 +101,7 @@ class RobotEyes(object):
         color, result = self._get_result(difference, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Fail', f'Image is not in screen , result: {result}') if self.fail else ''
+            BuiltIn().run_keyword('Capture Page Screenshot', f'Capture Page Screenshot') if self.fail else ''
 
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''
