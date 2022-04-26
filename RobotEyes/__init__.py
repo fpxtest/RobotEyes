@@ -97,8 +97,11 @@ class RobotEyes(object):
 
     def is_image_in_screen(self, template_path, tolerance=None):
         """Assert template image is in screen.
+
         template_path: xxxx.png
+
         tolerance: 1~100 number # The greater the fault tolerance value, the greater the allowable difference.
+
         Examples:
         | Is Image In Screen | xxx | 10 |
         """
