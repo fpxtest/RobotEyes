@@ -1,3 +1,4 @@
+# -*-coding:utf-8 -*-
 from datetime import datetime
 import shutil
 import time
@@ -95,6 +96,12 @@ class RobotEyes(object):
         self.browser.scroll_to_element(selector)
 
     def is_image_in_screen(self, template_path, tolerance=None):
+        """Assert template image is in screen.
+        template_path: xxxx.png
+        tolerance: 1~100 number # The greater the fault tolerance value, the greater the allowable difference.
+        Examples:
+        | Is Image In Screen | xxx | 10 |
+        """
         tolerance = float(tolerance) if tolerance else self.tolerance
         tolerance = tolerance / 100 if tolerance >= 1 else tolerance
         difference = self.browser.is_image_in_screen(template_path)
