@@ -9,7 +9,7 @@ from robot.libraries.BuiltIn import BuiltIn
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException, NoSuchFrameException
 
-from .opencv_match import UIMatcher
+from . import UIMatcher
 
 
 class SeleniumHooks(object):

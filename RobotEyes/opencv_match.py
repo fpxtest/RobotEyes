@@ -210,7 +210,7 @@ def imread(data) -> np.ndarray:
     raise IOError("image read invalid data: %s" % data)
 
 
-class UIMatcher:
+class UIMatcher(object):
     @staticmethod
     def RotateClockWise90(img):
         trans_img = cv2.transpose(img)

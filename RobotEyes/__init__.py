@@ -12,7 +12,8 @@ from .report_utils import *
 from .imagemagick import Imagemagick
 from .selenium_hooks import SeleniumHooks
 from .report_generator import generate_report
-
+from .opencv_match import UIMatcher
+from . import Log
 
 class RobotEyes(object):
     output_dir = ''
