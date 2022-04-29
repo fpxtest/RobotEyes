@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 import matplotlib.pylab as plt
 from skimage.metrics import structural_similarity
 
-import Log
+import .Log
 
 DEBUG = False
 ENABLE_CALC_TIME = False
