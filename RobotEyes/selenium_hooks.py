@@ -40,7 +40,9 @@ class SeleniumHooks(object):
         return self.mobile
 
     def find_by_image(self, imgBuff, templateImg):
-        res = UIMatcher.multi_scale_template_match(imgBuff, templateImg, min_scale=0.5, max_scale=2)
+        array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
+        img = cv2.imdecode(array, 0)
+        res = UIMatcher.multi_scale_template_match(img, templateImg, min_scale=0.5, max_scale=2)
         centre = (res['x'], res['y'])
 
         return res['r'], centre
