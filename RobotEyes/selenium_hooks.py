@@ -9,6 +9,8 @@ from robot.libraries.BuiltIn import BuiltIn
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException, NoSuchFrameException
 
+from opencv_match import UIMatcher
+
 
 class SeleniumHooks(object):
     mobile = False
@@ -38,20 +40,15 @@ class SeleniumHooks(object):
         return self.mobile
 
     def find_by_image(self, imgBuff, templateImg):
-        array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
-        img = cv2.imdecode(array, 0)
-        template = cv2.imread(templateImg, 0)
-        w, h = template.shape[::-1]
-        res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        centre = (max_loc[0] + (w / 2), max_loc[1] + (h / 2))
+        res = UIMatcher.multi_scale_template_match(imgBuff, templateImg, min_scale=0.5, max_scale=2)
+        centre = (res['x'], res['y'])
 
-        return max_val, centre
+        return res['r'], centre
 
     def is_image_in_screen(self, element_image_path, ):
         ssBuff = self.driver.get_screenshot_as_base64()
-        diff, loc = self.find_by_image(ssBuff, element_image_path)
-        trimmed = 1 - float("{:.2f}".format(float(diff)))
+        sim, loc = self.find_by_image(ssBuff, element_image_path)
+        trimmed = 1 - float("{:.2f}".format(float(sim)))
         print(f"Match template trimmed: {trimmed}, loc: {loc}")
         return trimmed
 

@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
-import os
 
-version = '1.6.2'
+version = '1.6.3'
 
 setup(name='robotframework-eyes',
       version=version,
@@ -26,6 +25,8 @@ Visual regression library and report generator for robot framework. Capture elem
           'robotframework',
           'flask',
           'opencv-python',
+          'requests',
+          'scikit-image',
       ],
       entry_points={
           'console_scripts': [
