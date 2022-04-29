@@ -9,7 +9,7 @@ from robot.libraries.BuiltIn import BuiltIn
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException, NoSuchFrameException
 
-from . import UIMatcher
+from .opencv_match import UIMatcher
 
 
 class SeleniumHooks(object):
@@ -41,7 +41,7 @@ class SeleniumHooks(object):
 
     def find_by_image(self, imgBuff, templateImg):
         array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
-        img = cv2.imdecode(array, 0)
+        img = cv2.imdecode(array, cv2.COLOR_BGR2GRAY)
         res = UIMatcher.multi_scale_template_match(img, templateImg, min_scale=0.5, max_scale=2)
         centre = (res['x'], res['y'])
 
