@@ -384,5 +384,5 @@ class UIMatcher(object):
         return res
 
 if __name__ == '__main__':
-    res = UIMatcher.multi_scale_template_match('/Users/orionc/workspace/dev_project/RobotEyes/RobotEyes/testfull.png', "http://oldboy.run:9000/myserver/output/ff0b5b17-a524-4ee3-911d-fb0954080603.png", min_scale=0.5, max_scale=2)
+    res = UIMatcher.multi_scale_template_match('test.png', "test", min_scale=0.5, max_scale=2)
     print(res)
