@@ -17,7 +17,7 @@ from typing import List
 
 from . import Log
 
-DEBUG = True
+DEBUG = False
 ENABLE_CALC_TIME = False
 
 ImageType = typing.Union[np.ndarray, Image.Image]
@@ -466,6 +466,7 @@ class UIMatcher(object):
                 plt.imshow(result_img)
                 plt.pause(0.01)
             try:
+                print(save_dir + "/res_" + template_path)
                 plt.imsave(save_dir + "/res_" + template_path, result_img)
             except FileNotFoundError:
                 Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + template_path}')
