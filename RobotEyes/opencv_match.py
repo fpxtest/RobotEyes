@@ -468,10 +468,10 @@ class UIMatcher(object):
                 plt.pause(0.01)
             try:
                 file_name = f"{uuid.uuid4()}.png"
-                print(save_dir + "/res_" + file_name)
-                plt.imsave(save_dir + "/res_" + file_name, result_img)
+                print(save_dir + "/selenium-screenshot-" + file_name)
+                plt.imsave(save_dir + "/selenium-screenshot" + file_name, result_img)
             except FileNotFoundError:
-                Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + file_name}')
+                Log.color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot" + file_name}')
 
         return result
 
