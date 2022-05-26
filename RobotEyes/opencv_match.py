@@ -12,10 +12,12 @@ import requests
 from PIL import Image, ImageDraw
 import matplotlib.pylab as plt
 from skimage.metrics import structural_similarity
+from typing import List
 
-from . import Log
 
-DEBUG = False
+import Log
+
+DEBUG = True
 ENABLE_CALC_TIME = False
 
 ImageType = typing.Union[np.ndarray, Image.Image]
@@ -383,6 +385,94 @@ class UIMatcher(object):
 
         return res
 
+    @staticmethod
+    def SIFT_Finder(screen_path, template_path, save_dir=None):
+        """
+        特征匹配
+        :param screen: 屏幕截图
+        :param template_path: 模板路径
+        :return: {'r': 相似度, 'x': x坐标, 'y': y坐标}
+        """
+        # 读取图片
+        screen = imread(screen_path)
+        template = imread(template_path)
+
+        # 处理灰化图片
+        _screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+        _template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+
+        # 初始化SIFT
+        fd_de = cv2.SIFT().create()
+
+        # 获取特征点和描述信息
+        kp1, des1 = fd_de.detectAndCompute(_screen, None)
+        kp2, des2 = fd_de.detectAndCompute(_template, None)
+
+        # FLANN 特征匹配
+        FLANN_INDEX_KDTREE = 0
+        index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+        search_params = dict(checks=50)
+        flann = cv2.FlannBasedMatcher(index_params, search_params)
+        matches = flann.knnMatch(des1, des2, k=2)
+
+        # 创建蒙层
+        matchesMask = [[0, 0] for i in range(len(matches))]
+
+        matches_good = []
+        xs = []
+        ys = []
+        # 比率测试获取最优特征点及其坐标
+        for i, (m, n) in enumerate(matches):
+            if m.distance < 0.7 * n.distance:
+                matchesMask[i] = [1, 0]
+                xs.append(kp1[m.queryIdx].pt[0])
+                ys.append(kp1[m.queryIdx].pt[1])
+                matches_good.append(m)
+
+        if len(matches_good) <= 4:
+            print("Get good matches failed! ")
+            return None
+
+        draw_params = dict(matchColor=(0, 255, 0),
+                           singlePointColor=(255, 0, 0),
+                           matchesMask=matchesMask,
+                           flags=0)
+
+        def majorityElement(nums: List[int]) -> int:
+            if not nums:
+                return None
+            list_nums = sorted(nums)
+            size = len(list_nums)
+            if size % 2 == 1:
+                j = list_nums[round((size - 1) / 2)]
+            else:
+                j = (list_nums[round(size / 2 - 1)] + list_nums[round(size / 2)] + 0.0) / 2
+            return j
+
+        resultX = majorityElement(xs)
+        resultY = majorityElement(ys)
+        if not resultX or not resultY:
+            print("Get result x or y failed! ")
+            return None
+        result = {"x": resultX, "y": resultY}
+
+        print("Matches with ratio test:{}->{}".format(len(matches), len(matches_good)))
+        print(f"Get result success. {result}")
+
+        # 绘制结果
+        if save_dir:
+            result_img = cv2.drawMatchesKnn(screen, kp1, template, kp2, matches, None, **draw_params)
+            if DEBUG:
+                plt.imshow(result_img)
+                plt.pause(0.01)
+            try:
+                plt.imsave(save_dir + "/res_" + template_path, result_img)
+            except FileNotFoundError:
+                Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + template_path}')
+
+        return result
+
+
 if __name__ == '__main__':
-    res = UIMatcher.multi_scale_template_match('test.png', "test", min_scale=0.5, max_scale=2)
+    res = UIMatcher.SIFT_Finder('full.png', "tem.png", save_dir='res')
     print(res)

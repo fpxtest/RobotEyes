@@ -96,7 +96,7 @@ class RobotEyes(object):
     def scroll_to_element(self, selector):
         self.browser.scroll_to_element(selector)
 
-    def is_image_in_screen(self, template_path, tolerance=None):
+    def image_is_in_screen(self, template_path):
         """Assert template image is in screen.
 
         template_path: xxxx.png
@@ -104,12 +104,11 @@ class RobotEyes(object):
         tolerance: 1~100 number # The greater the fault tolerance value, the greater the allowable difference.
 
         Examples:
-        | Is Image In Screen | xxx | 10 |
+        | Image Is  In Screen | xxx |
         """
-        tolerance = float(tolerance) if tolerance else self.tolerance
-        tolerance = tolerance / 100 if tolerance >= 1 else tolerance
-        difference = self.browser.is_image_in_screen(template_path)
-        color, result = self._get_result(difference, tolerance)
+        tolerance = 0
+        trimmed = self.browser.image_is_in_screen(template_path, save_dir=self.path)
+        color, result = self._get_result(trimmed, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
             BuiltIn().run_keyword('Fail', f'Image is not in screen , result: {result}') if self.fail else ''

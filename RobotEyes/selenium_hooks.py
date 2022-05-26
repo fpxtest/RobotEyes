@@ -39,18 +39,24 @@ class SeleniumHooks(object):
     def is_mobile(self):
         return self.mobile
 
-    def find_by_image(self, imgBuff, templateImg):
+    def find_by_image(self, imgBuff, templateImg, save_dir):
         array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
         img = cv2.imdecode(array, cv2.COLOR_BGR2GRAY)
-        res = UIMatcher.multi_scale_template_match(img, templateImg, min_scale=0.5, max_scale=2)
-        centre = (res['x'], res['y'])
+        res = UIMatcher.SIFT_Finder(img, templateImg, save_dir)
+        if res:
+            centre = (res['x'], res['y'])
+        else:
+            centre = None
 
-        return res['r'], centre
+        return centre
 
-    def is_image_in_screen(self, element_image_path, ):
+    def image_is_in_screen(self, element_image_path, save_dir):
         ssBuff = self.driver.get_screenshot_as_base64()
-        sim, loc = self.find_by_image(ssBuff, element_image_path)
-        trimmed = 1 - float("{:.2f}".format(float(sim)))
+        loc = self.find_by_image(ssBuff, element_image_path, save_dir)
+        if loc:
+            trimmed = 0
+        else:
+            trimmed = 1
         print(f"Match template trimmed: {trimmed}, loc: {loc}")
         return trimmed
 

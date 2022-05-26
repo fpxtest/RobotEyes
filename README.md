@@ -44,7 +44,7 @@ It also serves as documentation to clarify how this library functions on a high 
 | Scroll To Element      | locator                          | Ex `scroll to element  id=user`                                                             |
 | Compare Images         |                                  | Compares all the images captured in the test with their respective base image               |
 | Compare Two Images     | first, second, output, tolerance | Compares two images captured in the above steps. Takes image names, diff file name and tolerance as arguments Ex: Compare Two Images  img1  img2  diff  10|
-| Is Image In Screen     | template_image | Assert image is screen. |
+| Image Is  In Screen     | template_image |
 
 ## Cleanup Options
 This is only set when invoking open eyes
