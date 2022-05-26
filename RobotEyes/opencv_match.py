@@ -15,7 +15,7 @@ from skimage.metrics import structural_similarity
 from typing import List
 
 
-import Log
+from . import Log
 
 DEBUG = True
 ENABLE_CALC_TIME = False
