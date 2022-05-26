@@ -4,6 +4,7 @@ import io
 import os
 import re
 import typing
+import uuid
 from typing import Union
 import cv2
 import imutils
@@ -466,10 +467,11 @@ class UIMatcher(object):
                 plt.imshow(result_img)
                 plt.pause(0.01)
             try:
-                print(save_dir + "/res_" + template_path)
-                plt.imsave(save_dir + "/res_" + template_path, result_img)
+                file_name = f"{uuid.uuid4()}.png"
+                print(save_dir + "/res_" + file_name)
+                plt.imsave(save_dir + "/res_" + file_name, result_img)
             except FileNotFoundError:
-                Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + template_path}')
+                Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + file_name}')
 
         return result
 
