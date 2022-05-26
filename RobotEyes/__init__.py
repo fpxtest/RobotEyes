@@ -107,7 +107,6 @@ class RobotEyes(object):
         | Image Is  In Screen | xxx |
         """
         tolerance = 0
-        BuiltIn().run_keyword('Log', self.baseline_dir)
         trimmed = self.browser.image_is_in_screen(template_path, self.baseline_dir)
         color, result = self._get_result(trimmed, tolerance)
         if color != self.pass_color:
