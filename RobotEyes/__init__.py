@@ -107,7 +107,7 @@ class RobotEyes(object):
         | Image Is  In Screen | xxx |
         """
         tolerance = 0
-        trimmed = self.browser.image_is_in_screen(template_path, save_dir=self.path)
+        trimmed = self.browser.image_is_in_screen(template_path, save_dir=self.baseline_dir)
         color, result = self._get_result(trimmed, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
