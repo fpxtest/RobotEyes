@@ -1,5 +1,7 @@
 import math
 import platform
+import time
+
 import cv2
 import numpy
 
@@ -8,6 +10,7 @@ from PIL import Image, ImageFilter, ImageOps
 from robot.libraries.BuiltIn import BuiltIn
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException, NoSuchFrameException
+from selenium.webdriver.common.action_chains import ActionChains
 
 from .opencv_match import UIMatcher
 
@@ -39,10 +42,10 @@ class SeleniumHooks(object):
     def is_mobile(self):
         return self.mobile
 
-    def find_by_image(self, imgBuff, templateImg, save_dir):
+    def find_by_image(self, imgBuff, templateImg, match_points, save_dir):
         array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
         img = cv2.imdecode(array, cv2.COLOR_BGR2GRAY)
-        res = UIMatcher.SIFT_Finder(img, templateImg, save_dir)
+        res = UIMatcher.SIFT_Finder(img, templateImg, match_points, save_dir)
         if res:
             centre = (res['x'], res['y'])
         else:
@@ -50,15 +53,32 @@ class SeleniumHooks(object):
 
         return centre
 
-    def image_is_in_screen(self, element_image_path, save_dir):
-        ssBuff = self.driver.get_screenshot_as_base64()
-        loc = self.find_by_image(ssBuff, element_image_path, save_dir)
+    def image_is_in_screen(self, element_image_path, save_dir, match_points, retry):
+        loc = None
+        count = 0
+        while not loc and count < retry:
+            time.sleep(1)
+            ssBuff = self.driver.get_screenshot_as_base64()
+            loc = self.find_by_image(ssBuff, element_image_path, match_points, save_dir)
         if loc:
             trimmed = 0
         else:
             trimmed = 1
         print(f"Match template trimmed: {trimmed}, loc: {loc}")
-        return trimmed
+        return trimmed, loc
+
+    def click_locxy(self, x, y, left_click=True):
+        '''
+        dr:浏览器
+        x:页面x坐标
+        y:页面y坐标
+        left_click:True为鼠标左键点击，否则为右键点击
+        '''
+        if left_click:
+            ActionChains(self.driver).move_by_offset(x, y).click().perform()
+        else:
+            ActionChains(self.driver).move_by_offset(x, y).context_click().perform()
+        ActionChains(self.driver).move_by_offset(-x, -y).perform()  # 将鼠标位置恢复到移动前
 
     def capture_full_screen(self, path, blur=[], radius=50, redact=[]):
         self.driver.save_screenshot(path)

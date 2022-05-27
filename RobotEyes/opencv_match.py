@@ -388,7 +388,7 @@ class UIMatcher(object):
         return res
 
     @staticmethod
-    def SIFT_Finder(screen_path, template_path, save_dir=None):
+    def SIFT_Finder(screen_path, template_path, match_points=4, save_dir=None):
         """
         特征匹配
         :param screen: 屏幕截图
@@ -431,7 +431,7 @@ class UIMatcher(object):
                 ys.append(kp1[m.queryIdx].pt[1])
                 matches_good.append(m)
 
-        if len(matches_good) <= 4:
+        if len(matches_good) <= match_points:
             print("Get good matches failed! ")
             return None
 

@@ -96,22 +96,47 @@ class RobotEyes(object):
     def scroll_to_element(self, selector):
         self.browser.scroll_to_element(selector)
 
-    def image_is_in_screen(self, template_path):
+    def image_is_in_screen(self, template_path, match_points=4, retry=2):
         """Assert template image is in screen.
 
         template_path: xxxx.png
 
-        tolerance: 1~100 number # The greater the fault tolerance value, the greater the allowable difference.
+        match_points: 1~100 number
+
+        retry: 1~10 number
 
         Examples:
-        | Image Is  In Screen | xxx |
+        | Image Is In Screen | template_image | match_points |  retry | match_points default is 4, retry default is 2
         """
         tolerance = 0
-        trimmed = self.browser.image_is_in_screen(template_path, self.baseline_dir)
+        trimmed, _ = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
         color, result = self._get_result(trimmed, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
             BuiltIn().run_keyword('Fail', f'Image is not in screen , result: {result}') if self.fail else ''
+
+    def click_by_image(self, template_path, match_points=8, retry=2):
+        """click template image in screen.
+
+        template_path: xxxx.png
+
+        match_points: 1~100 number
+
+        retry: 1~10 number
+
+        Examples:
+        | Click By Image | template_image | match_points |  retry | match_points default is 4, retry default is 2
+        """
+        tolerance = 0
+        trimmed, loc = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
+        failed = 0
+        if trimmed or not loc:
+            failed = 1
+        self.browser.click_locxy(loc[0], loc[1])
+        color, result = self._get_result(failed, tolerance)
+        if color != self.pass_color:
+            BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
+            BuiltIn().run_keyword('Fail', f'Image is not in screen , click failed. result: {result}') if self.fail else ''
 
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''
