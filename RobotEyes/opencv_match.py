@@ -472,7 +472,7 @@ class UIMatcher(object):
                 print(save_dir + "/selenium-screenshot-" + file_name)
                 plt.imsave(save_dir + "/selenium-screenshot-" + file_name, result_img)
                 msg = f'<a href="selenium-screenshot-{file_name}"><img src="selenium-screenshot-{file_name}"/></a>'
-                BuiltIn().run_keyword('Log', msg)
+                BuiltIn().run_keyword('Log', msg, 'html=yes')
             except FileNotFoundError:
                 Log.color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot-" + file_name}')
 
