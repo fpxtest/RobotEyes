@@ -60,6 +60,7 @@ class SeleniumHooks(object):
             time.sleep(1)
             ssBuff = self.driver.get_screenshot_as_base64()
             match_points_length, loc = self.find_by_image(ssBuff, element_image_path, match_points, save_dir)
+            count += 1
         if loc:
             trimmed = 0
         else:
