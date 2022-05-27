@@ -18,7 +18,7 @@ from typing import List
 
 from Log import *
 
-from . import Log
+from .Log import *
 
 DEBUG = False
 ENABLE_CALC_TIME = False
