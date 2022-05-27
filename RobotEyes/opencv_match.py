@@ -16,8 +16,6 @@ from skimage.metrics import structural_similarity
 from robot.libraries.BuiltIn import BuiltIn
 from typing import List
 
-from Log import *
-
 from .Log import *
 
 DEBUG = False
