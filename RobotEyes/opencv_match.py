@@ -16,6 +16,7 @@ from skimage.metrics import structural_similarity
 from robot.libraries.BuiltIn import BuiltIn
 from typing import List
 
+from Log import *
 
 from . import Log
 
@@ -348,7 +349,7 @@ class UIMatcher(object):
                 # cv2.rectangle(clone, (maxLoc[0], maxLoc[1]), (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
                 # plt.imshow(clone)
                 # plt.pause(0.01)
-                Log.color_log.info("> 比例：%.2f -> 相似度：%.2f", scale, maxVal)
+                color_log.info("> 比例：%.2f -> 相似度：%.2f", scale, maxVal)
 
             # 如果发现一个新的关联值则进行更新
             if found is None or maxVal > found[0]:
@@ -369,13 +370,13 @@ class UIMatcher(object):
             try:
                 plt.imsave(save_dir + "/res_" + template_path, matched_screen)
             except FileNotFoundError:
-                Log.color_log.debug(f'保存文件出错：{save_dir + "/res_" + template_path}')
+                color_log.debug(f'保存文件出错：{save_dir + "/res_" + template_path}')
 
 
         if ENABLE_CALC_TIME:
             end_time = time.time()
             print(end_time)
-            Log.color_log.debug("耗时：%.2f", end_time - start_time)
+            color_log.debug("耗时：%.2f", end_time - start_time)
 
         # 计算坐标
         res = dict()
@@ -383,7 +384,7 @@ class UIMatcher(object):
         res['y'] = (startY + endY) / 2
         res['r'] = found[0]
         res['x0'], res['x1'], res['y0'], res['y1'] = startX, endX, startY, endY
-        Log.color_log.debug(res)
+        color_log.debug(res)
 
         return res
 
@@ -474,7 +475,7 @@ class UIMatcher(object):
                 msg = f'<a href="selenium-screenshot-{file_name}"><img src="selenium-screenshot-{file_name}"/></a>'
                 BuiltIn().run_keyword('Log', msg, 'html=yes')
             except FileNotFoundError:
-                Log.color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot-" + file_name}')
+                color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot-" + file_name}')
 
         return len(matches_good), result
 
