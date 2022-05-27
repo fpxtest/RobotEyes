@@ -109,11 +109,11 @@ class RobotEyes(object):
         | Image Is In Screen | template_image | match_points |  retry | match_points default is 4, retry default is 2
         """
         tolerance = 0
-        trimmed, _ = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
+        trimmed, _, match_points_length = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
         color, result = self._get_result(trimmed, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
-            BuiltIn().run_keyword('Fail', f'Image is not in screen , result: {result}') if self.fail else ''
+            BuiltIn().run_keyword('Fail', f'Image is not in screen , match points {match_points_length},  result: {result}') if self.fail else ''
 
     def click_by_image(self, template_path, match_points=8, retry=2):
         """click template image in screen.
@@ -128,7 +128,7 @@ class RobotEyes(object):
         | Click By Image | template_image | match_points |  retry | match_points default is 4, retry default is 2
         """
         tolerance = 0
-        trimmed, loc = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
+        trimmed, loc, match_points_length = self.browser.image_is_in_screen(template_path, self.baseline_dir, match_points, retry)
         failed = 0
         if trimmed or not loc:
             failed = 1
@@ -136,7 +136,7 @@ class RobotEyes(object):
         color, result = self._get_result(failed, tolerance)
         if color != self.pass_color:
             BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
-            BuiltIn().run_keyword('Fail', f'Image is not in screen , click failed. result: {result}') if self.fail else ''
+            BuiltIn().run_keyword('Fail', f'Image is not in screen , match points {match_points_length},  result: {result}') if self.fail else ''
 
     def compare_two_images(self, ref, actual, output, tolerance=None):
         ref += '.png' if ref.split('.')[-1] not in IMAGE_EXTENSIONS else ''

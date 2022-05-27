@@ -45,13 +45,13 @@ class SeleniumHooks(object):
     def find_by_image(self, imgBuff, templateImg, match_points, save_dir):
         array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
         img = cv2.imdecode(array, cv2.COLOR_BGR2GRAY)
-        res = UIMatcher.SIFT_Finder(img, templateImg, match_points, save_dir)
-        if res:
-            centre = (res['x'], res['y'])
+        match_points_length, location = UIMatcher.SIFT_Finder(img, templateImg, match_points, save_dir)
+        if location:
+            centre = (location['x'], location['y'])
         else:
             centre = None
 
-        return centre
+        return match_points_length, centre
 
     def image_is_in_screen(self, element_image_path, save_dir, match_points, retry):
         loc = None
@@ -59,13 +59,13 @@ class SeleniumHooks(object):
         while not loc and count < retry:
             time.sleep(1)
             ssBuff = self.driver.get_screenshot_as_base64()
-            loc = self.find_by_image(ssBuff, element_image_path, match_points, save_dir)
+            match_points_length, loc = self.find_by_image(ssBuff, element_image_path, match_points, save_dir)
         if loc:
             trimmed = 0
         else:
             trimmed = 1
-        print(f"Match template trimmed: {trimmed}, loc: {loc}")
-        return trimmed, loc
+        print(f"Match template points: {match_points_length}, loc: {loc}")
+        return trimmed, loc, match_points_length
 
     def click_locxy(self, x, y, left_click=True):
         '''

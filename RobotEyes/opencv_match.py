@@ -433,7 +433,7 @@ class UIMatcher(object):
 
         if len(matches_good) <= match_points:
             print("Get good matches failed! ")
-            return None
+            return len(matches_good), None
 
         draw_params = dict(matchColor=(0, 255, 0),
                            singlePointColor=(255, 0, 0),
@@ -476,7 +476,7 @@ class UIMatcher(object):
             except FileNotFoundError:
                 Log.color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot-" + file_name}')
 
-        return result
+        return len(matches_good), result
 
 
 if __name__ == '__main__':
