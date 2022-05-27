@@ -389,7 +389,7 @@ class UIMatcher(object):
         return res
 
     @staticmethod
-    def SIFT_Finder(screen_path, template_path, match_points=4, save_dir=None):
+    def image_finder(screen_path, template_path, MIN_MATCH_COUNT=4, save_dir=None):
         """
         特征匹配
         :param screen: 屏幕截图
@@ -397,49 +397,49 @@ class UIMatcher(object):
         :return: {'r': 相似度, 'x': x坐标, 'y': y坐标}
         """
         # 读取图片
-        screen = imread(screen_path)
         template = imread(template_path)
+        screen = imread(screen_path)
 
         # 处理灰化图片
         _screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
         _template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
-        # 初始化SIFT
-        fd_de = cv2.SIFT().create()
+        # 初始化
+        sift = cv2.SIFT_create()
 
         # 获取特征点和描述信息
-        kp1, des1 = fd_de.detectAndCompute(_screen, None)
-        kp2, des2 = fd_de.detectAndCompute(_template, None)
+        kp1, des1 = sift.detectAndCompute(_template, None)
+        kp2, des2 = sift.detectAndCompute(_screen, None)
 
         # FLANN 特征匹配
-        FLANN_INDEX_KDTREE = 0
+        FLANN_INDEX_KDTREE = 1
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
         search_params = dict(checks=50)
         flann = cv2.FlannBasedMatcher(index_params, search_params)
         matches = flann.knnMatch(des1, des2, k=2)
 
-        # 创建蒙层
-        matchesMask = [[0, 0] for i in range(len(matches))]
-
-        matches_good = []
+        # 最优匹配
+        good = []
         xs = []
         ys = []
-        # 比率测试获取最优特征点及其坐标
-        for i, (m, n) in enumerate(matches):
+        for m, n in matches:
             if m.distance < 0.7 * n.distance:
-                matchesMask[i] = [1, 0]
                 xs.append(kp1[m.queryIdx].pt[0])
                 ys.append(kp1[m.queryIdx].pt[1])
-                matches_good.append(m)
+                good.append(m)
 
-        if len(matches_good) <= match_points:
-            print("Get good matches failed! ")
-            return len(matches_good), None
-
-        draw_params = dict(matchColor=(0, 255, 0),
-                           singlePointColor=(255, 0, 0),
-                           matchesMask=matchesMask,
-                           flags=0)
+        if len(good) > MIN_MATCH_COUNT:
+            src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+            dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+            M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+            matchesMask = mask.ravel().tolist()
+            h, w = _template.shape
+            pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
+            dst = cv2.perspectiveTransform(pts, M)
+            screen = cv2.polylines(screen, [np.int32(dst)], True, (255,0,0), 3, cv2.LINE_AA)
+        else:
+            print("Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT))
+            return len(good), None
 
         def majorityElement(nums: List[int]) -> int:
             if not nums:
@@ -456,15 +456,15 @@ class UIMatcher(object):
         resultY = majorityElement(ys)
         if not resultX or not resultY:
             print("Get result x or y failed! ")
-            return None
+            return len(good), None
         result = {"x": resultX, "y": resultY}
-
-        print("Matches with ratio test:{}->{}".format(len(matches), len(matches_good)))
-        print(f"Get result success. {result}")
-
+        draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
+                           singlePointColor=None,
+                           matchesMask=matchesMask,  # draw only inliers
+                           flags=2)
         # 绘制结果
         if save_dir:
-            result_img = cv2.drawMatchesKnn(screen, kp1, template, kp2, matches, None, **draw_params)
+            result_img = cv2.drawMatches(template, kp1, screen, kp2, good, None, **draw_params)
             if DEBUG:
                 plt.imshow(result_img)
                 plt.pause(0.01)
@@ -477,9 +477,9 @@ class UIMatcher(object):
             except FileNotFoundError:
                 color_log.debug(f'保存文件出错：{save_dir + "/selenium-screenshot-" + file_name}')
 
-        return len(matches_good), result
+        return len(good), result
 
 
 if __name__ == '__main__':
-    res = UIMatcher.SIFT_Finder('full.png', "tem.png", save_dir='res')
+    res = UIMatcher.image_finder('full.png', "tem.png", save_dir='res')
     print(res)

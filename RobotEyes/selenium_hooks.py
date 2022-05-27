@@ -45,7 +45,7 @@ class SeleniumHooks(object):
     def find_by_image(self, imgBuff, templateImg, match_points, save_dir):
         array = numpy.frombuffer(b64decode(imgBuff), dtype='uint8')
         img = cv2.imdecode(array, cv2.COLOR_BGR2GRAY)
-        match_points_length, location = UIMatcher.SIFT_Finder(img, templateImg, match_points, save_dir)
+        match_points_length, location = UIMatcher.image_finder(img, templateImg, match_points, save_dir)
         if location:
             centre = (location['x'], location['y'])
         else:

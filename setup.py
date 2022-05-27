@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.7.9.1'
+version = '1.8.0'
 
 setup(name='robotframework-eyes',
       version=version,
