@@ -57,3 +57,33 @@ class Imagemagick(object):
                     raise Exception('Could not parse comparison output: %s' % err)
             finally:
                 attempts += 1
+
+    def compare_images_to_output(self):
+        compare_cmd = f'compare -fuzz 15% -metric ae {self.img1} {self.img2} {self.diff} '
+        attempts = 0
+        while attempts < 2:
+            proc = subprocess.Popen(compare_cmd,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+            err, out = proc.communicate()
+            if err:
+                print('Comparison err: %s' % err)
+            if out:
+                print('Comparison output: %s' % out)
+            try:
+                diff = out
+                trimmed = float("{:.2f}".format(float(diff)))
+                return trimmed
+            except Exception as e:
+                if attempts == 0:
+                    print('Comparison failed first time. Output %s' % err)
+                else:
+                    print(e)
+                    raise Exception('Could not parse comparison output: %s' % err)
+            finally:
+                attempts += 1
+
+
+if __name__ == '__main__':
+    diff = Imagemagick('base.png', 'diff.png', 'out.png').compare_images_to_output()
+    print(diff)

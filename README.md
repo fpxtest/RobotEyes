@@ -38,14 +38,13 @@ It also serves as documentation to clarify how this library functions on a high 
 | Keyword                | Arguments                        | Comments                                                                                    |
 |------------------------|----------------------------------|---------------------------------------------------------------------------------------------|
 | Open Eyes              | lib, tolerance, template_id, cleanup                   | Ex `open eyes  lib=AppiumLibrary  tolerance=5  cleanup=all_passed`                                                |
-| Capture Full Screen    | tolerance, blur, radius, name, redact          | Ex `capture full screen  tolerance=5  name=homepage  blur=<array of locators>` radius=50(thickness of blur) |
-| Capture Element        | locator, tolerance, blur, radius, name, redact |                                                                                             |
-| Capture Mobile Element | locator, tolerance, blur, radius, name, redact |                                                                                             |
 | Scroll To Element      | locator                          | Ex `scroll to element  id=user`                                                             |
 | Compare Images         |                                  | Compares all the images captured in the test with their respective base image               |
 | Compare Two Images     | first, second, output, tolerance | Compares two images captured in the above steps. Takes image names, diff file name and tolerance as arguments Ex: Compare Two Images  img1  img2  diff  10|
-| Image Is In Screen     | template_image | match_points |  retry | match_points default is 4, retry default is 2
-| Click By Image         | template_image | match_points |  retry | match_points default is 4, retry default is 2
+| Image Is In Screen     | template_image, match_points, retry| match_points default is 4, retry default is 2|
+| Click By Image         | template_image,  match_points, retry | match_points default is 4, retry default is 2|
+| Element Image Compare  | locator,  template_image,  diff_allow_value,   retry | diff_allow_value default is 4, retry default is 2|
+
 
 ## Cleanup Options
 This is only set when invoking open eyes

@@ -59,42 +59,65 @@ class RobotEyes(object):
         self.count = 1
 
     # Captures full screen
-    def capture_full_screen(self, tolerance=None, blur=[], radius=50, name=None, redact=[]):
-        tolerance = float(tolerance) if tolerance else self.tolerance
-        tolerance = tolerance/100 if tolerance >= 1 else tolerance
-        name = self._get_name() if name is None else name
-        name += '.png'
-        path = os.path.join(self.path, name)
-        self.browser.capture_full_screen(path, blur, radius, redact)
-        self._fix_base_image_size(path, name)
-        self.stats[name] = tolerance
-        self.count += 1
+    # def capture_full_screen(self, tolerance=None, blur=[], radius=50, name=None, redact=[]):
+    #     tolerance = float(tolerance) if tolerance else self.tolerance
+    #     tolerance = tolerance/100 if tolerance >= 1 else tolerance
+    #     name = self._get_name() if name is None else name
+    #     name += '.png'
+    #     path = os.path.join(self.path, name)
+    #     self.browser.capture_full_screen(path, blur, radius, redact)
+    #     self._fix_base_image_size(path, name)
+    #     self.stats[name] = tolerance
+    #     self.count += 1
 
     # Captures a specific region in a mobile screen
-    def capture_mobile_element(self, selector, tolerance=None, blur=[], radius=50, name=None, redact=[]):
-        tolerance = float(tolerance) if tolerance else self.tolerance
-        name = self._get_name() if name is None else name
-        name += '.png'
-        path = os.path.join(self.path, name)
-        self.browser.capture_mobile_element(selector, path, blur, radius, redact)
-        self.stats[name] = tolerance
-        self.count += 1
+    # def capture_mobile_element(self, selector, tolerance=None, blur=[], radius=50, name=None, redact=[]):
+    #     tolerance = float(tolerance) if tolerance else self.tolerance
+    #     name = self._get_name() if name is None else name
+    #     name += '.png'
+    #     path = os.path.join(self.path, name)
+    #     self.browser.capture_mobile_element(selector, path, blur, radius, redact)
+    #     self.stats[name] = tolerance
+    #     self.count += 1
 
-    # Captures a specific region in a webpage
-    def capture_element(self, selector, tolerance=None, blur=[], radius=50, name=None, redact=[]):
-        tolerance = float(tolerance) if tolerance else self.tolerance
-        tolerance = tolerance/100 if tolerance >= 1 else tolerance
-        name = self._get_name() if name is None else name
-        name += '.png'
-        path = os.path.join(self.path, name)
-        time.sleep(1)
-        self.browser.capture_element(path, selector, blur, radius, redact)
-        self._fix_base_image_size(path, name)
-        self.stats[name] = tolerance
-        self.count += 1
+    # # Captures a specific region in a webpage
+    # def capture_element(self, selector, tolerance=None, blur=[], radius=50, name=None, redact=[]):
+    #     tolerance = float(tolerance) if tolerance else self.tolerance
+    #     tolerance = tolerance/100 if tolerance >= 1 else tolerance
+    #     name = self._get_name() if name is None else name
+    #     name += '.png'
+    #     path = os.path.join(self.path, name)
+    #     time.sleep(1)
+    #     self.browser.capture_element(path, selector, blur, radius, redact)
+    #     self._fix_base_image_size(path, name)
+    #     self.stats[name] = tolerance
+    #     self.count += 1
 
     def scroll_to_element(self, selector):
         self.browser.scroll_to_element(selector)
+
+    def element_image_compare(self, selector, template_path, diff_allow_value=4, retry=2):
+        """Compare template image with element.
+
+        selector: element locator
+
+        template_path: xxxx.png
+
+        diff_allow_value: <0 number
+
+        retry: 1~10 number
+
+        Examples:
+        | Element Image Compare | locator | template_image | diff_allow_value |  retry | diff_allow_value default is 4, retry default is 2
+        """
+        tolerance = 0
+        trimmed, diff_result = self.browser.element_image_compare(selector, template_path, self.baseline_dir,
+                                                                          diff_allow_value, retry)
+        color, result = self._get_result(trimmed, tolerance)
+        if color != self.pass_color:
+            BuiltIn().run_keyword('Capture Page Screenshot') if self.fail else ''
+            BuiltIn().run_keyword('Fail',
+                                  f'Compare element image failed , difference value {diff_result}, result: {result}') if self.fail else ''
 
     def image_is_in_screen(self, template_path, match_points=4, retry=2):
         """Assert template image is in screen.

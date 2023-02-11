@@ -1,7 +1,7 @@
 import math
 import platform
 import time
-
+import uuid
 import cv2
 import numpy
 
@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException, NoSuchFrameExcept
 from selenium.webdriver.common.action_chains import ActionChains
 
 from .opencv_match import UIMatcher
+from .imagemagick import Imagemagick
 
 
 class SeleniumHooks(object):
@@ -326,3 +327,28 @@ class SeleniumHooks(object):
             top = top * 2
             bottom = bottom * 2
         return int(left), int(right), int(top), int(bottom)
+
+    def element_image_compare(self, selector, element_temp_path, save_dir, diff_allow_value, retry):
+        file_name = f"{uuid.uuid4()}.png"
+        ele_file_name = f"ele_{file_name}"
+        out_file_name = f"result_{file_name}"
+        ele_file_path = save_dir + "/selenium-screenshot-" + ele_file_name
+        out_put_path = save_dir + "/selenium-screenshot-" + out_file_name
+
+        result = None
+        count = 0
+        while not result and count < retry:
+            self.capture_element(ele_file_path, selector)
+            time.sleep(1)
+            result = Imagemagick(element_temp_path, ele_file_path, out_put_path).compare_images_to_output()
+            count += 1
+        if result:
+            if result < diff_allow_value:
+                trimmed = 0
+            else:
+                trimmed = 1
+        else:
+            trimmed = 1
+        msg = f'<a href="selenium-screenshot-{out_file_name}"><img src="selenium-screenshot-{out_file_name}"/></a>'
+        BuiltIn().run_keyword('Log', msg, 'html=yes')
+        return trimmed, result
