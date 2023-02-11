@@ -16,8 +16,8 @@ from skimage.metrics import structural_similarity
 from robot.libraries.BuiltIn import BuiltIn
 from typing import List
 
-# from .Log import *
-import Log
+from .Log import *
+# import Log
 
 DEBUG = False
 ENABLE_CALC_TIME = False
