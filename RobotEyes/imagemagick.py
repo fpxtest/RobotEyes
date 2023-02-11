@@ -59,7 +59,7 @@ class Imagemagick(object):
                 attempts += 1
 
     def compare_images_to_output(self):
-        compare_cmd = f'compare -fuzz 15% -metric ae {self.img1} {self.img2} {self.diff} '
+        compare_cmd = f'compare -fuzz 15% -metric ae -resize 1000 {self.img1} {self.img2} {self.diff} '
         attempts = 0
         while attempts < 2:
             proc = subprocess.Popen(compare_cmd,
